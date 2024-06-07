@@ -27,13 +27,17 @@ pub fn parse(value: &str, override_existing_keys: bool) -> Result<Settings> {
         }
 
         if line.next_if(|c| *c == '[').is_some() {
-            let new_category_name: String = line.peeking_take_while(|c| *c != ']').collect();
+            let new_category_name: String = line
+                .peeking_take_while(|c| *c != ']')
+                .collect::<String>()
+                .trim()
+                .to_string();
 
             if !line.next().is_some_and(|c| c == ']') {
                 bail!("L#{i}: unterminated category: {new_category_name:?}")
             }
 
-            current_category = new_category_name.trim().to_string();
+            current_category = new_category_name;
         }
 
         if !skip_leading_whitespace(&mut line) {
